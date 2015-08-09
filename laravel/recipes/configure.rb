@@ -30,6 +30,7 @@ node[:deploy].each do |application, deploy|
   # move supervisord configurations
   execute "mv supervisord.conf /etc/supervisor/conf.d/" do
       cwd "#{deploy[:deploy_to]}/current"
+      user "root"
       command <<-EOH
     rm /etc/supervisor/conf.d/supervisord.conf
     mv supervisord.conf /etc/supervisor/conf.d/supervisord.conf
@@ -43,21 +44,17 @@ node[:deploy].each do |application, deploy|
   # Install dependencies using composer install
   include_recipe 'npm::install'
 
-  #re-read configurations
-  execute "supervisorctl reread" do
-      cwd "#{deploy[:deploy_to]}/current"
-      command "sudo supervisorctl reread"
-  end
-
   #update supervisord
   execute "supervisorctl update" do
       cwd "#{deploy[:deploy_to]}/current"
+      user "root"
       command "sudo supervisorctl update"
   end
 
   #restart all process
   execute "supervisorctl restart all" do
       cwd "#{deploy[:deploy_to]}/current"
+      user "root"
       command "sudo supervisorctl restart all"
   end
 end
