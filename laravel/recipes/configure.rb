@@ -30,8 +30,11 @@ node[:deploy].each do |application, deploy|
   # move supervisord configurations
   execute "mv supervisord.conf /etc/supervisor/conf.d/" do
       cwd "#{deploy[:deploy_to]}/current"
-      command "mv supervisord.conf /etc/supervisor/conf.d/supervisord.laravel.conf"
-      not_if { ::File.exist? "#{deploy[:deploy_to]}/current/supervisord.conf" }
+      command <<-EOH
+    rm /etc/supervisor/conf.d/supervisord.conf
+    mv supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+    EOH
+      only_if { ::File.exist? "#{deploy[:deploy_to]}/current/supervisord.conf" }
   end
 
   # Install dependencies using composer install
