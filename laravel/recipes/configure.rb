@@ -32,8 +32,8 @@ node[:deploy].each do |application, deploy|
       cwd "#{deploy[:deploy_to]}/current"
       user "root"
       command <<-EOH
-    rm /etc/supervisor/conf.d/supervisord.conf
-    mv supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+    rm /etc/supervisor/conf.d/supervisord.laravel.conf
+    mv supervisord.conf /etc/supervisor/conf.d/supervisord.laravel.conf
     EOH
       only_if { ::File.exist? "#{deploy[:deploy_to]}/current/supervisord.conf" }
   end
