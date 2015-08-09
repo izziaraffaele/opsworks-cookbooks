@@ -21,10 +21,17 @@ node[:deploy].each do |application, deploy|
       command "chmod -R u+rwX,g+rwX ."
   end
 
-  # correct permissions to allow apache to write
+  # Environment file
   execute "rename .env.production" do
       cwd "#{deploy[:deploy_to]}/current"
       command "cp .env.production .env"
+  end
+
+  # move supervisord configurations
+  execute "mv supervisord.conf /etc/supervisor/conf.d/" do
+      cwd "#{deploy[:deploy_to]}/current"
+      command "mv supervisord.conf /etc/supervisor/conf.d/supervisord.laravel.conf"
+      not_if { ::File.exist? "#{deploy[:deploy_to]}/current/supervisord.conf" }
   end
 
   # Install dependencies using composer install
@@ -32,4 +39,22 @@ node[:deploy].each do |application, deploy|
 
   # Install dependencies using composer install
   include_recipe 'npm::install'
+
+  #re-read configurations
+  execute "supervisorctl reread" do
+      cwd "#{deploy[:deploy_to]}/current"
+      command "sudo supervisorctl reread"
+  end
+
+  #update supervisord
+  execute "supervisorctl update" do
+      cwd "#{deploy[:deploy_to]}/current"
+      command "sudo supervisorctl update"
+  end
+
+  #restart all process
+  execute "supervisorctl restart all" do
+      cwd "#{deploy[:deploy_to]}/current"
+      command "sudo supervisorctl restart all"
+  end
 end
