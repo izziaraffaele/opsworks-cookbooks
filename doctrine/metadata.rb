@@ -1,0 +1,6 @@
+name              "doctrine"
+maintainer        "Izzia Raffaele"
+maintainer_email  "izziaraffaele@gmail.com"
+license           "MIT"
+description       "Set of recipes to help setup doctrine databases."
+version           "1.0.0"
