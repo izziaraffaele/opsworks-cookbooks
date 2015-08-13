@@ -44,6 +44,12 @@ node[:deploy].each do |application, deploy|
   # Install dependencies using composer install
   include_recipe 'npm::install'
 
+  # Clean laravel cache
+  execute "php artisan cache:clear" do
+      cwd "#{deploy[:deploy_to]}/current"
+      command "php artisan cache:clear"
+  end
+
   #restart supervisord
   script "restart_supervisor" do
     interpreter "bash"
