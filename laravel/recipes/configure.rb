@@ -33,7 +33,7 @@ node[:deploy].each do |application, deploy|
       user "root"
       command <<-EOH
     rm /etc/supervisor/conf.d/supervisord.laravel.conf
-    mv supervisord.conf /etc/supervisor/conf.d/supervisord.laravel.conf
+    cp supervisord.conf /etc/supervisor/conf.d/supervisord.laravel.conf
     EOH
       only_if { ::File.exist? "#{deploy[:deploy_to]}/current/supervisord.conf" }
   end
@@ -50,16 +50,11 @@ node[:deploy].each do |application, deploy|
     user "root"
     cwd "#{deploy[:deploy_to]}/current"
     code <<-EOH
+    rm supervisord.conf
     supervisorctl stop all
     supervisorctl shutdown
     supervisord -c /etc/supervisor/supervisord.conf
     EOH
-  end
-
-  #restart all process
-  execute "supervisorctl restart all" do
-      cwd "#{deploy[:deploy_to]}/current"
-      user "root"
-      command "sudo supervisorctl start all"
+    only_if { ::File.exist? "#{deploy[:deploy_to]}/current/supervisord.conf" }
   end
 end
