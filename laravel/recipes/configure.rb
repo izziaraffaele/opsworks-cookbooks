@@ -71,6 +71,6 @@ node[:deploy].each do |application, deploy|
     day     "*"
     month   "*"
     weekday "*"
-    command "php #{deploy[:deploy_to]}/current schedule:run >> /dev/null 2>&1"
+    command "php #{deploy[:deploy_to]}/current/artisan schedule:run >> /dev/null 2>&1"
   end
 end
