@@ -24,7 +24,7 @@ node[:deploy].each do |application, deploy|
   # Environment file
   execute "rename .env.production" do
       cwd "#{deploy[:deploy_to]}/current"
-      command "cp .env.production .env"
+      command "mv .env.production .env"
   end
 
   # move supervisord configurations
