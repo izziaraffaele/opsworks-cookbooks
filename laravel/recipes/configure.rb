@@ -38,4 +38,14 @@ node[:deploy].each do |application, deploy|
     EOH
       only_if { ::File.exist? "#{deploy[:deploy_to]}/current/supervisord.conf" }
   end
+
+  #setup laravel cronjob
+  cron "Laravel cronjob" do
+    minute  "*"
+    hour    "*"
+    day     "*"
+    month   "*"
+    weekday "*"
+    command "php #{deploy[:deploy_to]}/current/artisan schedule:run >> /dev/null 2>&1"
+  end
 end
