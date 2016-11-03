@@ -24,6 +24,11 @@ when 'debian'
     retries 3
     retry_delay 5
   end
+  execute "add-apt-repository" do
+    command "sudo add-apt-repository ppa:ondrej/php5-5.6"
+  end
+end
+
 when 'rhel'
   package 'php' do
     action :install
